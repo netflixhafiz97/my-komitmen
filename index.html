@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<title>My_Komitmen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1a14">
+<base target="_top">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f5f2;--surface:#ffffff;--ink:#18221d;--muted:#5f6d66;--line:#dbe2dc;
+  --accent:#1f6f4f;--accent-ink:#ffffff;--neg:#b4402a;--warn:#9a6a12;--soft:#e7efe9;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --head:'Sora','IBM Plex Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#111613;--surface:#18201b;--ink:#e6ece8;--muted:#93a39a;--line:#2b3630;
+    --accent:#4fbf8d;--accent-ink:#0d1a13;--neg:#ef8a72;--warn:#e2b45a;--soft:#1e2a23;
+    color-scheme:dark;
+  }
+}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--sans)}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:960px;margin:0 auto;padding:20px 16px calc(96px + env(safe-area-inset-bottom))}
+.mono,.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+h1,h2,h3{font-family:var(--head);font-weight:600;margin:0;letter-spacing:-.01em}
+
+/* Header */
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px 16px;flex-wrap:wrap;margin-bottom:16px}
+h1{font-size:22px;line-height:1.25}
+.sync{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);margin-top:4px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--line);flex:none}
+.dot.ok{background:var(--accent)}.dot.bad{background:var(--neg)}
+.monthbar{display:flex;align-items:center;gap:6px}
+.mbtn{appearance:none;width:38px;height:38px;border:1px solid var(--line);background:var(--surface);border-radius:8px;font-size:18px;line-height:1;cursor:pointer}
+.mbtn:hover{border-color:var(--muted)}
+.mlabel{min-width:148px;text-align:center;font-family:var(--head);font-weight:600;font-size:15px}
+.mnow{appearance:none;border:0;background:none;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;padding:4px 6px}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;min-width:0}
+.card+.card{margin-top:12px}
+.chead{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;padding:14px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.chead h2{font-size:16px}
+.cbody{padding:16px}
+.cfoot{padding:12px 16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.hint{font-size:13px;color:var(--muted);margin:0}
+.label{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+/* Hero */
+.hero{padding:20px;margin-bottom:12px}
+.hero-num{font-family:var(--head);font-size:40px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;line-height:1.15;margin:6px 0 4px;overflow-wrap:anywhere}
+.hero-num.neg{color:var(--neg)}
+.hero-sub{font-size:14px;color:var(--muted)}
+.hero-sub .mono{color:var(--ink);font-weight:500}
+.hero-sub .mono.neg{color:var(--neg)}
+.bar{height:6px;background:var(--soft);border-radius:99px;overflow:hidden;margin:16px 0 6px}
+.bar>span{display:block;height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .3s}
+.bar.over>span{background:var(--neg)}
+.hero-foot{font-size:13px;color:var(--muted)}
+
+/* Summary */
+.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:20px}
+.cell{padding:14px 16px;border-left:1px solid var(--line);min-width:0}
+.cell:first-child{border-left:0}
+.cell .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:18px;font-weight:500;margin-top:2px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cell .s{font-size:12px;color:var(--muted);margin-top:2px}
+.nw{white-space:nowrap}
+
+/* Tabs */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:16px;overflow-x:auto;scrollbar-width:none}
+.tab{appearance:none;border:0;background:none;padding:10px 14px;font-weight:600;font-size:14px;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+
+/* Buttons */
+.btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);border-radius:8px;padding:8px 16px;font-weight:600;font-size:14px;cursor:pointer;min-height:40px;white-space:nowrap}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.sm{padding:4px 12px;min-height:32px;font-size:13px}
+.btn.armed{background:var(--neg);border-color:var(--neg);color:#fff}
+.btn:disabled{opacity:.55;cursor:default}
+.link{appearance:none;background:none;border:0;color:var(--muted);text-decoration:underline;text-underline-offset:2px;font-size:13px;cursor:pointer;padding:2px 0}
+.link.armed{color:var(--neg);font-weight:600}
+.x{appearance:none;border:1px solid transparent;background:none;color:var(--muted);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:13px;white-space:nowrap;min-width:32px}
+.x:hover{border-color:var(--line)}
+.x.armed{background:var(--neg);color:#fff;border-color:var(--neg);font-weight:600}
+
+/* Chips */
+.chip{display:inline-flex;align-items:center;border:1px solid currentColor;border-radius:99px;padding:0 8px;font:600 12px/20px var(--sans);white-space:nowrap}
+.chip.g{color:var(--accent)}.chip.a{color:var(--warn)}.chip.r{color:var(--neg)}.chip.n{color:var(--muted)}
+
+/* Forms */
+.form{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field>label{font-size:12px;font-weight:600;color:var(--muted)}
+.field.wide{grid-column:span 2}
+.field.full,.form .actions{grid-column:1/-1}
+.form .actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+input,select{font-size:15px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-height:40px;width:100%;min-width:0}
+input:focus,select:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:var(--accent)}
+input.amt{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.err{color:var(--neg);font-size:13px;margin:0}
+.err:empty{display:none}
+
+/* Komitmen checklist */
+.krow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 16px;align-items:center;padding:12px 16px;border-top:1px solid var(--line)}
+.krow:first-child{border-top:0}
+.ktop{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.kname{font-weight:600;overflow-wrap:anywhere}
+.kmeta{font-size:13px;color:var(--muted);margin-top:2px}
+.kside{display:flex;align-items:center;gap:14px;justify-content:flex-end}
+.kamt{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:500;white-space:nowrap}
+.kpaid{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:13px;color:var(--muted);text-align:right}
+.kpaid .mono{color:var(--ink)}
+.krow.paid .kname{color:var(--muted)}
+.payform{grid-column:1/-1;display:grid;grid-template-columns:140px 170px minmax(0,1fr) auto auto;gap:8px;align-items:end;padding:12px;background:var(--soft);border-radius:10px}
+.payform .err{grid-column:1/-1}
+.empty{padding:20px 16px;color:var(--muted);font-size:14px;margin:0}
+
+/* Tables */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:12px;font-weight:600;color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+th:first-child,td:first-child{padding-left:16px}
+th:last-child,td:last-child{padding-right:16px}
+.r{text-align:right}
+td.num,th.num{text-align:right;white-space:nowrap}
+td.nw{white-space:nowrap}
+td.muted{color:var(--muted)}
+tbody tr:last-child td{border-bottom:0}
+tfoot td{font-weight:600;border-top:1px solid var(--line);border-bottom:0}
+tr.dim td>*:not(.sw):not(.x){opacity:.5}
+tr.open td{background:var(--soft)}
+td .neg,.neg{color:var(--neg)}
+.tin{width:104px;min-height:34px;padding:4px 8px;text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:14px}
+.tday{width:64px;min-height:34px;padding:4px 8px;text-align:right;font-family:var(--mono);font-size:14px}
+.tmon{width:150px;min-height:34px;padding:4px 8px;font-size:14px}
+.sw{appearance:none;-webkit-appearance:none;width:38px;height:22px;min-height:0;padding:0;border:0;border-radius:99px;background:var(--line);position:relative;cursor:pointer;flex:none;vertical-align:middle}
+.sw::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--surface);transition:left .15s}
+.sw:checked{background:var(--accent)}
+.sw:checked::after{left:19px}
+.sw:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Banner */
+.banner{display:flex;align-items:center;gap:10px 12px;flex-wrap:wrap;padding:12px 16px;margin-bottom:12px;border:1px solid var(--warn);border-radius:12px;background:var(--surface)}
+.banner p{margin:0;flex:1 1 220px;font-weight:600}
+.banner .btns{display:flex;gap:8px;flex-wrap:wrap}
+
+/* Breakdown */
+.brk{display:grid;grid-template-columns:minmax(90px,140px) minmax(0,1fr) auto;gap:10px 12px;align-items:center;font-size:13px}
+.brk .b{height:8px;background:var(--soft);border-radius:99px;overflow:hidden}
+.brk .b span{display:block;height:100%;background:var(--accent);border-radius:99px}
+.brk .n{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+.brk .n small{color:var(--muted);font-size:12px;margin-left:6px}
+
+/* Ringkasan */
+.rk .lead{font-size:16px;line-height:1.6;margin:0}
+.rk h3{font-size:14px;margin:22px 0 6px}
+.rk ul{list-style:none;margin:0;padding:0}
+.rk li{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.rk li:first-child{border-top:0}
+.rk li .mono{white-space:nowrap}
+.rk li small{display:block;color:var(--muted);font-size:13px}
+.rk .none{color:var(--muted);font-size:14px;margin:0}
+.rk ul.cad li{justify-content:flex-start}
+.rk ul.cad li::before{content:'→';color:var(--accent);font-weight:600;flex:none}
+.rk .foot{margin:22px 0 0;font-size:12px;color:var(--muted)}
+
+/* Toast + dialog */
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;width:max-content;max-width:calc(100% - 32px);z-index:60}
+.overlay{position:fixed;inset:0;background:rgba(8,12,10,.5);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+.dialog{width:100%;max-width:340px;padding:20px}
+.dialog h2{font-size:18px;margin-bottom:4px}
+.dialog input{font-family:var(--mono);font-size:20px;letter-spacing:.3em;text-align:center;margin:14px 0 6px}
+.dialog .row{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+
+@media (max-width:760px){
+  h1{font-size:20px}
+  .top{align-items:flex-start}
+  .monthbar{width:100%;justify-content:space-between}
+  .mlabel{flex:1}
+  .tab{flex:1 1 auto;padding:10px 8px;font-size:13.5px}
+  .hero-num{font-size:34px}
+  .summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cell:nth-child(3){border-left:0}
+  .cell:nth-child(n+3){border-top:1px solid var(--line)}
+  .form{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .field.wide{grid-column:1/-1}
+  .form .actions .btn{flex:1}
+  .kside{flex-direction:column;align-items:flex-end;gap:6px}
+  .payform{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .payform .note{grid-column:1/-1}
+  input,select{font-size:16px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <h1>My_Komitmen</h1>
+      <div class="sync"><span class="dot" id="syncDot"></span><span id="syncText">Memuatkan…</span></div>
+    </div>
+    <nav class="monthbar" aria-label="Pilih bulan">
+      <button class="mbtn" id="mPrev" type="button" aria-label="Bulan sebelumnya">‹</button>
+      <div class="mlabel" id="mLabel">—</div>
+      <button class="mbtn" id="mNext" type="button" aria-label="Bulan seterusnya">›</button>
+      <button class="mnow" id="mNow" type="button" hidden>Bulan ini</button>
+    </nav>
+  </header>
+
+  <section class="card hero" aria-live="polite">
+    <div class="label">Baki semasa</div>
+    <div class="hero-num" id="heroBaki">RM —</div>
+    <div class="hero-sub">Selepas semua komitmen: <span class="mono" id="heroUnjuran">RM —</span></div>
+    <div class="bar" id="heroBar"><span></span></div>
+    <div class="hero-foot" id="heroPct">&nbsp;</div>
+  </section>
+
+  <section class="card summary">
+    <div class="cell"><div class="label">Pendapatan</div><div class="v" id="sInc">—</div></div>
+    <div class="cell"><div class="label">Komitmen</div><div class="v" id="sKom">—</div><div class="s" id="sKomSub">&nbsp;</div></div>
+    <div class="cell"><div class="label">Belanja lain</div><div class="v" id="sExp">—</div></div>
+    <div class="cell"><div class="label">Nisbah komitmen</div><div class="v" id="sRatio">—</div></div>
+  </section>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" data-tab="komitmen" type="button">Komitmen</button>
+    <button class="tab" role="tab" data-tab="pendapatan" type="button">Pendapatan</button>
+    <button class="tab" role="tab" data-tab="belanja" type="button">Belanja</button>
+    <button class="tab" role="tab" data-tab="ringkasan" type="button">Ringkasan</button>
+  </div>
+
+  <!-- Komitmen -->
+  <div class="panel" data-panel="komitmen" hidden>
+    <section class="card">
+      <div class="chead"><h2>Komitmen bulan ini</h2><div id="payAllSlot"></div></div>
+      <div id="komList" data-dyn></div>
+      <div class="cfoot" id="komFoot"></div>
+    </section>
+
+    <section class="card">
+      <div class="chead"><h2>Senarai komitmen tetap</h2><p class="hint">Ubah jumlah di sini untuk bulan akan datang. Bayaran lepas tidak berubah.</p></div>
+      <div class="tbl-wrap" id="tplTable" data-dyn></div>
+    </section>
+
+    <section class="card">
+      <div class="chead"><h2>Tambah komitmen tetap</h2></div>
+      <form class="cbody form" id="fKom" novalidate autocomplete="off">
+        <div class="field wide"><label for="kName">Nama</label><input id="kName" maxlength="80" placeholder="cth. Pinjaman kereta"></div>
+        <div class="field"><label for="kCat">Kategori</label><select id="kCat"></select></div>
+        <div class="field"><label for="kAmt">Jumlah (RM)</label><input id="kAmt" class="amt" inputmode="decimal" placeholder="0.00"></div>
+        <div class="field"><label for="kDue">Tarikh akhir bayar (hari 1–31)</label><input id="kDue" type="number" inputmode="numeric" min="1" max="31" placeholder="cth. 5"></div>
+        <div class="field"><label for="kStart">Mula bulan</label><input id="kStart" type="month"></div>
+        <div class="field"><label for="kEnd">Tamat bulan (pilihan)</label><input id="kEnd" type="month"></div>
+        <div class="field"><label for="kNote">Catatan</label><input id="kNote" maxlength="200"></div>
+        <div class="actions"><button class="btn" type="submit">Tambah</button><p class="err" id="kErr"></p></div>
+      </form>
+    </section>
+  </div>
+
+  <!-- Pendapatan -->
+  <div class="panel" data-panel="pendapatan" hidden>
+    <div id="incBanner" data-dyn></div>
+    <section class="card">
+      <div class="chead"><h2>Tambah pendapatan</h2></div>
+      <form class="cbody form" id="fInc" novalidate autocomplete="off">
+        <div class="field"><label for="iType">Jenis</label><select id="iType"><option value="Gaji">Gaji</option><option value="Lain">Lain</option></select></div>
+        <div class="field"><label for="iSrc">Sumber</label><input id="iSrc" maxlength="80" value="Gaji" placeholder="cth. Gaji, Bonus, Freelance"></div>
+        <div class="field"><label for="iAmt">Jumlah (RM)</label><input id="iAmt" class="amt" inputmode="decimal" placeholder="0.00"></div>
+        <div class="field"><label for="iDate">Tarikh</label><input id="iDate" type="date"></div>
+        <div class="field full"><label for="iNote">Catatan</label><input id="iNote" maxlength="200"></div>
+        <div class="actions"><button class="btn" type="submit">Tambah</button><p class="err" id="iErr"></p></div>
+      </form>
+    </section>
+    <section class="card">
+      <div class="chead"><h2>Pendapatan bulan ini</h2></div>
+      <div class="tbl-wrap" id="incTable" data-dyn></div>
+    </section>
+  </div>
+
+  <!-- Belanja -->
+  <div class="panel" data-panel="belanja" hidden>
+    <section class="card">
+      <div class="chead"><h2>Tambah belanja</h2></div>
+      <form class="cbody form" id="fExp" novalidate autocomplete="off">
+        <div class="field"><label for="eDate">Tarikh</label><input id="eDate" type="date"></div>
+        <div class="field wide"><label for="eItem">Perkara</label><input id="eItem" maxlength="80" placeholder="cth. Makan tengah hari"></div>
+        <div class="field"><label for="eCat">Kategori</label><select id="eCat"></select></div>
+        <div class="field"><label for="eAmt">RM</label><input id="eAmt" class="amt" inputmode="decimal" placeholder="0.00"></div>
+        <div class="field wide"><label for="eNote">Catatan</label><input id="eNote" maxlength="200"></div>
+        <div class="actions"><button class="btn" type="submit">Tambah</button><p class="err" id="eErr"></p></div>
+      </form>
+    </section>
+    <section class="card">
+      <div class="chead"><h2>Lejar belanja</h2><p class="hint">Baki semasa bermula daripada pendapatan tolak komitmen yang sudah dibayar.</p></div>
+      <div class="tbl-wrap" id="expTable" data-dyn></div>
+    </section>
+    <section class="card">
+      <div class="chead"><h2>Ikut kategori</h2></div>
+      <div class="cbody" id="expBreak"></div>
+    </section>
+  </div>
+
+  <!-- Ringkasan -->
+  <div class="panel" data-panel="ringkasan" hidden>
+    <section class="card"><div class="cbody rk" id="rk"></div></section>
+  </div>
+</div>
+
+<div class="overlay" id="pin" hidden role="dialog" aria-modal="true" aria-labelledby="pinTitle">
+  <form class="card dialog" id="pinForm" novalidate autocomplete="off">
+    <h2 id="pinTitle">Masukkan PIN</h2>
+    <p class="hint">PIN diperlukan untuk menyimpan perubahan.</p>
+    <input id="pinInput" type="password" inputmode="numeric" maxlength="12" aria-label="PIN">
+    <p class="err" id="pinErr" role="alert"></p>
+    <div class="row">
+      <button class="btn ghost" type="button" id="pinCancel">Batal</button>
+      <button class="btn" type="submit" id="pinOk">Teruskan</button>
+    </div>
+  </form>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ===== Pemalar ===== */
+  var BULAN = ['Januari','Februari','Mac','April','Mei','Jun','Julai','Ogos','September','Oktober','November','Disember'];
+  var BLN = ['Jan','Feb','Mac','Apr','Mei','Jun','Jul','Ogo','Sep','Okt','Nov','Dis'];
+  var KAT_K = ['Pinjaman','Sewa/Rumah','Kenderaan','Insurans/Takaful','Bil & Utiliti','Telefon/Internet','Pendidikan','Simpanan/Pelaburan','Langganan','Keluarga','Lain-lain'];
+  var KAT_B = ['Makanan','Pengangkutan','Barang dapur','Kesihatan','Hiburan','Pakaian','Sedekah/Derma','Lain-lain'];
+  var ORDER = { Lewat: 0, Hampir: 1, Belum: 2, Dibayar: 3 };
+  var CHIP = { Dibayar: 'g', Lewat: 'r', Hampir: 'a', Belum: 'n' };
+
+  function $(s) { return document.querySelector(s); }
+
+  /* ===== Storan selamat ===== */
+  var ls = {
+    get: function (k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { window.localStorage.setItem(k, v); } catch (e) {} },
+    del: function (k) { try { window.localStorage.removeItem(k); } catch (e) {} }
+  };
+
+  /* ===== Tarikh ===== */
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function todayISO() { var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function curMonth() { return todayISO().slice(0, 7); }
+  function addMonths(m, n) {
+    var y = +m.slice(0, 4), mo = +m.slice(5, 7) - 1 + n;
+    y += Math.floor(mo / 12); mo = ((mo % 12) + 12) % 12;
+    return y + '-' + pad(mo + 1);
+  }
+  function daysIn(m) { return new Date(+m.slice(0, 4), +m.slice(5, 7), 0).getDate(); }
+  function monthName(m) { return BULAN[+m.slice(5, 7) - 1] + ' ' + m.slice(0, 4); }
+  function monthOnly(m) { return BULAN[+m.slice(5, 7) - 1]; }
+  function monthShort(m) { return /^\d{4}-\d{2}$/.test(m || '') ? BLN[+m.slice(5, 7) - 1] + ' ' + m.slice(0, 4) : '—'; }
+  function isISO(s) { return /^\d{4}-\d{2}-\d{2}$/.test(s || ''); }
+  function shortDate(iso) { return isISO(iso) ? (+iso.slice(8, 10)) + ' ' + BLN[+iso.slice(5, 7) - 1] : (iso || '—'); }
+  function dayDiff(a, b) {
+    var ua = Date.UTC(+a.slice(0, 4), +a.slice(5, 7) - 1, +a.slice(8, 10));
+    var ub = Date.UTC(+b.slice(0, 4), +b.slice(5, 7) - 1, +b.slice(8, 10));
+    return Math.round((ub - ua) / 864e5);
+  }
+  function dueISO(k, m) { return m + '-' + pad(Math.min(Math.max(1, Math.round(+k.dueDay) || 1), daysIn(m))); }
+  function defaultDate(m) { return m === curMonth() ? todayISO() : m + '-01'; }
+
+  /* ===== Wang ===== */
+  var NF = new Intl.NumberFormat('ms-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  function cents(n) { return Math.round((+n || 0) * 100); }
+  function sum(list) { return list.reduce(function (s, x) { return s + cents(x); }, 0) / 100; }
+  function rm(n) { var c = cents(n); return (c < 0 ? '-' : '') + 'RM ' + NF.format(Math.abs(c) / 100); }
+  function plain(n) { return (cents(n) / 100).toFixed(2); }
+  function parseAmt(v) {
+    var s = String(v == null ? '' : v).replace(/[^0-9.]/g, '');
+    var p = s.split('.');
+    var t = p.length > 1 ? p[0] + '.' + p[1] : p[0];
+    var n = Math.round(parseFloat(t) * 100) / 100;
+    return isFinite(n) ? n : NaN;
+  }
+  function pct(n) {
+    if (n == null || !isFinite(n)) return '—';
+    var r = Math.round(n * 10) / 10;
+    return (r % 1 === 0 ? r.toFixed(0) : r.toFixed(1)) + '%';
+  }
+  function ratioInfo(n) {
+    if (n == null) return null;
+    if (n < 40) return ['Sihat', 'g'];
+    if (n <= 60) return ['Berhati-hati', 'a'];
+    return ['Tinggi', 'r'];
+  }
+
+  /* ===== DOM selamat ===== */
+  function h(tag, props) {
+    var el = document.createElement(tag);
+    if (props) Object.keys(props).forEach(function (k) {
+      var v = props[k];
+      if (v == null || v === false) return;
+      if (k === 'class') el.className = v;
+      else if (k === 'text') el.textContent = v;
+      else if (k.slice(0, 2) === 'on' && typeof v === 'function') el.addEventListener(k.slice(2), v);
+      else if (k === 'value' || k === 'checked' || k === 'disabled') el[k] = v;
+      else el.setAttribute(k, v === true ? '' : String(v));
+    });
+    for (var i = 2; i < arguments.length; i++) append(el, arguments[i]);
+    return el;
+  }
+  function append(el, c) {
+    if (c == null || c === false) return;
+    if (Array.isArray(c)) { c.forEach(function (x) { append(el, x); }); return; }
+    el.appendChild(c.nodeType ? c : document.createTextNode(String(c)));
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; });
+  }
+  function fillSelect(sel, list) { sel.replaceChildren.apply(sel, list.map(function (x) { return h('option', { value: x, text: x }); })); }
+
+  /* Butang dua langkah: tekan sekali untuk sedia, tekan lagi dalam 3 s untuk sahkan. */
+  function twoStep(label, armedLabel, cls, action, aria) {
+    var b = h('button', { type: 'button', class: cls, text: label, 'aria-label': aria || null });
+    var armed = false, t = null;
+    b.addEventListener('click', function () {
+      if (!armed) {
+        armed = true; b.textContent = armedLabel; b.classList.add('armed');
+        t = setTimeout(function () { armed = false; b.textContent = label; b.classList.remove('armed'); }, 3000);
+        return;
+      }
+      clearTimeout(t); armed = false; b.disabled = true;
+      Promise.resolve(action()).then(function () { b.disabled = false; b.textContent = label; b.classList.remove('armed'); });
+    });
+    return b;
+  }
+
+  /* ===== Toast ===== */
+  var toastT = null;
+  function toast(msg) {
+    var t = $('#toast'); t.textContent = msg; t.hidden = false;
+    clearTimeout(toastT); toastT = setTimeout(function () { t.hidden = true; }, 3600);
+  }
+
+  /* ===== Lapisan data ===== */
+  var API_URL = 'https://script.google.com/macros/s/AKfycbysXtj0VV8L-TO1D364QlX9zlo6jQfU12e0qweQFPCcG1KkDo208fWgWDhY5vSYDnJQ/exec';
+  function api(fn) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    var body = JSON.stringify({ fn: fn, args: args, pin: ls.get('km-pin') || '' });
+    return fetch(API_URL, { method: 'POST', credentials: 'omit', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: body })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (!j || !j.ok) throw new Error((j && j.error) || 'Ralat pelayan'); return j.result; });
+  }
+  function errText(e) { return String((e && e.message) || e || '').replace(/^(Exception|Error|ScriptError):\s*/i, ''); }
+  var OUR_ERR = /tidak|tiada|mesti|Terlalu|Maklumat|Rekod|Jumlah|Bulan|Tarikh|Tab /;
+  function friendly(m) { return OUR_ERR.test(m) && m.length < 160 ? m : 'Gagal simpan. Cuba lagi.'; }
+
+  var DATA = { komitmen: [], bayaran: [], pendapatan: [], belanja: [] };
+  var lastJSON = '', loaded = false, epoch = 0, pending = 0, PIN_REQ = false;
+  var subs = [];
+  function emit() { subs.forEach(function (f) { f(); }); }
+
+  function normalize(d) {
+    d = d || {};
+    function arr(x) { return Array.isArray(x) ? x : []; }
+    return {
+      komitmen: arr(d.komitmen).map(function (k) { k.amount = +k.amount || 0; k.dueDay = +k.dueDay || 0; k.no = +k.no || 0; k.active = k.active === true || String(k.active).toUpperCase() === 'TRUE'; return k; }),
+      bayaran: arr(d.bayaran).map(function (x) { x.amount = +x.amount || 0; x.created = +x.created || 0; return x; }),
+      pendapatan: arr(d.pendapatan).map(function (x) { x.amount = +x.amount || 0; x.created = +x.created || 0; return x; }),
+      belanja: arr(d.belanja).map(function (x) { x.amount = +x.amount || 0; x.created = +x.created || 0; return x; })
+    };
+  }
+
+  function setSync(ok) {
+    $('#syncDot').className = 'dot ' + (ok ? 'ok' : 'bad');
+    $('#syncText').textContent = ok ? 'Disegerak dengan Google Sheet' : 'Tidak disegerak';
+  }
+
+  function refresh() {
+    var my = epoch;
+    return api('getAll').then(function (d) {
+      setSync(true);
+      PIN_REQ = !!(d && d.pinRequired);
+      if (my !== epoch || pending > 0) return;
+      var j = JSON.stringify(d);
+      if (loaded && j === lastJSON) return;
+      loaded = true; lastJSON = j; DATA = normalize(d); emit();
+    }, function (e) {
+      var m = errText(e);
+      if (/BAD_PIN/.test(m)) { ls.del('km-pin'); return unlock(); }
+      setSync(false);
+      if (!loaded) toast(/Terlalu/.test(m) ? m : 'Data tidak dapat dimuatkan sekarang. Cuba muat semula halaman.');
+    });
+  }
+  /* Data hanya dipaparkan selepas PIN betul. */
+  function unlock() {
+    $('#syncDot').className = 'dot bad';
+    $('#syncText').textContent = '🔒 Terkunci. Ketik di sini untuk masukkan PIN';
+    return askPin().then(function (p) {
+      if (p) return refresh();
+      toast('Masukkan PIN untuk melihat data.');
+    });
+  }
+
+  document.addEventListener('click', function (e) { if (e.target && e.target.id === 'syncText' && !loaded) unlock(); });
+  /* PIN */
+  var pinWait = null;
+  function askPin() {
+    if (pinWait) return pinWait;
+    pinWait = new Promise(function (resolve) {
+      var ov = $('#pin'), inp = $('#pinInput'), err = $('#pinErr'), ok = $('#pinOk'), form = $('#pinForm');
+      inp.value = ''; err.textContent = ''; ov.hidden = false;
+      setTimeout(function () { inp.focus(); }, 30);
+      function done(v) {
+        ov.hidden = true; form.onsubmit = null; $('#pinCancel').onclick = null; ov.onkeydown = null;
+        pinWait = null; resolve(v);
+      }
+      $('#pinCancel').onclick = function () { done(null); };
+      ov.onkeydown = function (e) { if (e.key === 'Escape') done(null); };
+      form.onsubmit = function (e) {
+        e.preventDefault();
+        var p = inp.value.trim();
+        if (!p) { err.textContent = 'Sila masukkan PIN.'; return; }
+        ok.disabled = true; err.textContent = '';
+        api('checkPin', p).then(function (good) {
+          ok.disabled = false;
+          if (good) { ls.set('km-pin', p); done(p); }
+          else { err.textContent = 'PIN salah. Cuba lagi.'; inp.select(); }
+        }, function (e2) {
+          ok.disabled = false;
+          var m = errText(e2);
+          err.textContent = /Terlalu/.test(m) ? m : 'Tidak dapat menyemak PIN. Cuba lagi.';
+        });
+      };
+    });
+    return pinWait;
+  }
+
+  /* Tulis: PIN → kemas kini serta-merta (optimistik) → pelayan → muat semula. */
+  function write(fn, argsFn, optimistic) {
+    var stored = ls.get('km-pin');
+    var getPin = !PIN_REQ ? Promise.resolve('') : stored ? Promise.resolve(stored) : askPin();
+    return getPin.then(function (pin) {
+      if (pin === null) return { ok: false, cancel: true };
+      epoch++; pending++;
+      var snap = JSON.stringify(DATA);
+      if (optimistic) { try { optimistic(DATA); } catch (e) {} emit(); }
+      return api.apply(null, [fn].concat(argsFn(pin))).then(function (r) {
+        return { ok: true, result: r };
+      }, function (e) {
+        DATA = JSON.parse(snap);
+        var m = errText(e);
+        if (/BAD_PIN/.test(m)) { ls.del('km-pin'); toast('PIN salah. Perubahan tidak disimpan.'); }
+        else toast(friendly(m));
+        emit();
+        return { ok: false };
+      }).then(function (out) {
+        pending--; epoch++; lastJSON = '';
+        if (pending === 0) refresh();
+        return out;
+      });
+    });
+  }
+  function tmpId() { return 'tmp' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+
+  /* ===== Pengiraan ===== */
+  function applies(k, m) { return k.active === true && !!k.startMonth && k.startMonth <= m && (!k.endMonth || m <= k.endMonth); }
+
+  function calc(m) {
+    var today = todayISO();
+    var app = DATA.komitmen.filter(function (k) { return applies(k, m); });
+    var pays = DATA.bayaran.filter(function (b) { return b.month === m; });
+    var payBy = {};
+    pays.forEach(function (b) { (payBy[b.komitmenId] = payBy[b.komitmenId] || []).push(b); });
+    var byId = {};
+    DATA.komitmen.forEach(function (k) { byId[k.id] = k; });
+    var appIds = {};
+    var items = app.map(function (k) {
+      appIds[k.id] = true;
+      var ps = payBy[k.id] || null, due = dueISO(k, m), days = dayDiff(today, due), st;
+      if (ps) st = 'Dibayar'; else if (days < 0) st = 'Lewat'; else if (days <= 3) st = 'Hampir'; else st = 'Belum';
+      return { k: k, ps: ps, due: due, days: days, st: st };
+    });
+    // Bayaran bagi komitmen yang sudah dinyahaktif: tetap dipapar sebagai Dibayar.
+    Object.keys(payBy).forEach(function (id) {
+      if (appIds[id]) return;
+      var ps = payBy[id], k = byId[id] || { id: id, name: ps[0].komitmenName || '(komitmen dipadam)', category: '', amount: 0, dueDay: 0 };
+      items.push({ k: k, ps: ps, due: null, days: null, st: 'Dibayar', orphan: true });
+    });
+    items.forEach(function (it) {
+      if (!it.ps) return;
+      it.paid = sum(it.ps.map(function (p) { return p.amount; }));
+      it.paidDate = it.ps.map(function (p) { return p.paidDate; }).sort().pop();
+    });
+    items.sort(function (a, b) {
+      return ORDER[a.st] - ORDER[b.st] || ((+a.k.dueDay || 99) - (+b.k.dueDay || 99)) || String(a.k.name).localeCompare(String(b.k.name));
+    });
+    var inc = DATA.pendapatan.filter(function (x) { return x.month === m; });
+    var exp = DATA.belanja.filter(function (x) { return String(x.date).slice(0, 7) === m; });
+    var c = {
+      m: m, app: app, pays: pays, items: items, inc: inc, exp: exp,
+      pendapatan: sum(inc.map(function (x) { return x.amount; })),
+      dijangka: sum(app.map(function (k) { return k.amount; })),
+      dibayar: sum(pays.map(function (x) { return x.amount; })),
+      belum: sum(items.filter(function (i) { return !i.ps; }).map(function (i) { return i.k.amount; })),
+      belanja: sum(exp.map(function (x) { return x.amount; }))
+    };
+    c.baki = (cents(c.pendapatan) - cents(c.dibayar) - cents(c.belanja)) / 100;
+    c.unjuran = (cents(c.baki) - cents(c.belum)) / 100;
+    c.nisbah = c.pendapatan > 0 ? c.dijangka / c.pendapatan * 100 : null;
+    c.unpaid = items.filter(function (i) { return !i.ps; });
+    return c;
+  }
+
+  /* ===== Keadaan paparan ===== */
+  var M = curMonth();
+  var TAB = ls.get('km-tab') || 'komitmen';
+  if (['komitmen', 'pendapatan', 'belanja', 'ringkasan'].indexOf(TAB) < 0) TAB = 'komitmen';
+  var payOpen = null, editEnd = null, deferred = false;
+
+  function isEditing() {
+    var a = document.activeElement;
+    return !!(a && /^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName) && a.type !== 'checkbox' && a.closest('[data-dyn]'));
+  }
+
+  function render() {
+    if (isEditing()) { deferred = true; return; }
+    deferred = false;
+    var c = calc(M);
+    renderTop(c);
+    renderKomitmen(c);
+    renderPendapatan(c);
+    renderBelanja(c);
+    renderRingkasan(c);
+  }
+  subs.push(render);
+  document.addEventListener('focusout', function () {
+    setTimeout(function () { if (deferred && !isEditing()) render(); }, 0);
+  });
+
+  /* ----- Atas: bulan, hero, ringkasan ----- */
+  function renderTop(c) {
+    $('#mLabel').textContent = monthName(M);
+    $('#mNow').hidden = M === curMonth();
+    var hb = $('#heroBaki');
+    hb.textContent = loaded ? rm(c.baki) : 'RM —';
+    hb.classList.toggle('neg', c.baki < 0);
+    var hu = $('#heroUnjuran');
+    hu.textContent = loaded ? rm(c.unjuran) : 'RM —';
+    hu.classList.toggle('neg', c.unjuran < 0);
+    var used = c.dibayar + c.belanja, bar = $('#heroBar');
+    if (c.pendapatan > 0) {
+      var p = used / c.pendapatan * 100;
+      bar.firstElementChild.style.width = Math.min(100, Math.max(0, p)) + '%';
+      bar.classList.toggle('over', p > 100);
+      $('#heroPct').textContent = pct(p) + ' pendapatan telah digunakan';
+    } else {
+      bar.firstElementChild.style.width = '0%'; bar.classList.remove('over');
+      $('#heroPct').textContent = loaded ? 'Tiada pendapatan direkod untuk ' + monthName(M) + '.' : ' ';
+    }
+    $('#sInc').textContent = rm(c.pendapatan);
+    $('#sKom').textContent = rm(c.dijangka);
+    $('#sKomSub').replaceChildren(h('span', { class: 'nw', text: 'Dibayar ' + rm(c.dibayar) }), ' · ', h('span', { class: 'nw', text: 'Belum ' + rm(c.belum) }));
+    $('#sExp').textContent = rm(c.belanja);
+    var ri = ratioInfo(c.nisbah), sr = $('#sRatio');
+    sr.replaceChildren(h('span', { text: pct(c.nisbah) }));
+    if (ri) sr.appendChild(h('span', { class: 'chip ' + ri[1], text: ri[0] }));
+  }
+
+  /* ----- Tab Komitmen ----- */
+  function renderKomitmen(c) {
+    var slot = $('#payAllSlot');
+    slot.replaceChildren();
+    if (c.unpaid.length) slot.appendChild(twoStep('Tanda semua dibayar', 'Pasti? Tekan lagi', 'btn sm ghost', function () { return payAll(c); }));
+
+    var list = $('#komList');
+    if (!c.items.length) {
+      list.replaceChildren(h('p', { class: 'empty', text: 'Belum ada komitmen. Tambah komitmen tetap di bawah.' }));
+    } else {
+      list.replaceChildren.apply(list, c.items.map(function (it) { return komRow(it, c); }));
+    }
+    $('#komFoot').textContent = 'Jumlah dijangka ' + rm(c.dijangka) + ' · Dibayar ' + rm(c.dibayar) + ' · Belum ' + rm(c.belum);
+    renderTemplates();
+    if (payOpen) {
+      var f = list.querySelector('.payform input');
+      if (f) { f.focus(); f.select(); }
+    }
+  }
+
+  function komRow(it, c) {
+    var k = it.k;
+    var meta = [k.category || null, it.due ? 'Tarikh akhir: ' + shortDate(it.due) : null].filter(Boolean).join(' · ');
+    if (it.ps && !it.orphan && cents(it.paid) !== cents(k.amount)) meta += ' · dijangka ' + rm(k.amount);
+    var side;
+    if (it.ps) {
+      side = h('div', { class: 'kpaid' },
+        h('div', null, 'Dibayar ' + shortDate(it.paidDate) + ' · ', h('span', { class: 'mono', text: rm(it.paid) })),
+        twoStep('Batal bayaran', 'Pasti batal?', 'link', function () { return cancelPay(it); }));
+    } else {
+      side = h('div', { class: 'kside' },
+        h('span', { class: 'kamt', text: rm(k.amount) }),
+        h('button', { type: 'button', class: 'btn sm' + (payOpen === k.id ? ' ghost' : ''), text: payOpen === k.id ? 'Tutup' : 'Bayar',
+          onclick: function () { payOpen = payOpen === k.id ? null : k.id; render(); } }));
+    }
+    var row = h('div', { class: 'krow' + (it.ps ? ' paid' : '') },
+      h('div', { class: 'kmain' },
+        h('div', { class: 'ktop' }, h('span', { class: 'chip ' + CHIP[it.st], text: it.st }), h('span', { class: 'kname', text: k.name })),
+        h('div', { class: 'kmeta', text: meta })),
+      side);
+    if (!it.ps && payOpen === k.id) row.appendChild(payForm(k, c.m));
+    return row;
+  }
+
+  function payForm(k, m) {
+    var amt = h('input', { class: 'amt', inputmode: 'decimal', value: plain(k.amount), 'aria-label': 'Jumlah dibayar' });
+    var date = h('input', { type: 'date', value: defaultDate(m) === todayISO() ? todayISO() : dueISO(k, m), 'aria-label': 'Tarikh bayar' });
+    var note = h('input', { maxlength: '200', placeholder: 'Catatan (pilihan)', 'aria-label': 'Catatan' });
+    var err = h('p', { class: 'err' });
+    var f = h('form', { class: 'payform', novalidate: true },
+      h('div', { class: 'field' }, h('label', { text: 'Jumlah (RM)' }), amt),
+      h('div', { class: 'field' }, h('label', { text: 'Tarikh' }), date),
+      h('div', { class: 'field note' }, h('label', { text: 'Catatan' }), note),
+      h('button', { class: 'btn', type: 'submit', text: 'Simpan' }),
+      h('button', { class: 'btn ghost', type: 'button', text: 'Batal', onclick: function () { payOpen = null; render(); } }),
+      err);
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var a = parseAmt(amt.value);
+      if (!(a > 0)) { err.textContent = 'Jumlah mesti lebih daripada RM 0.'; return; }
+      if (!isISO(date.value)) { err.textContent = 'Sila pilih tarikh bayar.'; return; }
+      var rec = { month: m, komitmenId: k.id, komitmenName: k.name, amount: a, paidDate: date.value, note: note.value.trim() };
+      payOpen = null;
+      if (document.activeElement) document.activeElement.blur();
+      write('addRow', function (pin) { return ['bayaran', rec, pin]; }, function (d) {
+        d.bayaran.push(Object.assign({ id: tmpId(), created: Date.now() }, rec));
+      }).then(function (r) { if (r.ok) toast(k.name + ' ditanda dibayar.'); });
+    });
+    return f;
+  }
+
+  function cancelPay(it) {
+    var ids = it.ps.map(function (p) { return p.id; });
+    return ids.reduce(function (chain, id) {
+      return chain.then(function (prev) {
+        if (prev && !prev.ok) return prev;
+        return write('deleteRow', function (pin) { return ['bayaran', id, pin]; }, function (d) {
+          d.bayaran = d.bayaran.filter(function (b) { return b.id !== id; });
+        });
+      });
+    }, Promise.resolve(null)).then(function (r) { if (r && r.ok) toast('Bayaran ' + it.k.name + ' dibatalkan.'); });
+  }
+
+  function payAll(c) {
+    var day = todayISO();
+    var todo = c.unpaid.filter(function (i) { return !i.orphan; });
+    return write('payAll', function (pin) { return [c.m, pin, day]; }, function (d) {
+      todo.forEach(function (i) {
+        d.bayaran.push({ id: tmpId(), month: c.m, komitmenId: i.k.id, komitmenName: i.k.name, amount: i.k.amount, paidDate: day, note: '', created: Date.now() });
+      });
+    }).then(function (r) {
+      if (r.ok) toast((r.result && r.result.paid != null ? r.result.paid : todo.length) + ' komitmen ditanda dibayar.');
+    });
+  }
+
+  function renderTemplates() {
+    var box = $('#tplTable');
+    var rows = DATA.komitmen.slice().sort(function (a, b) { return (a.no - b.no) || String(a.name).localeCompare(String(b.name)); });
+    if (!rows.length) { box.replaceChildren(h('p', { class: 'empty', text: 'Belum ada komitmen tetap.' })); return; }
+    var hasPay = {};
+    DATA.bayaran.forEach(function (b) { hasPay[b.komitmenId] = true; });
+    var total = sum(rows.filter(function (k) { return k.active; }).map(function (k) { return k.amount; }));
+    box.replaceChildren(h('table', null,
+      h('thead', null, h('tr', null,
+        h('th', { text: 'Nama' }), h('th', { text: 'Kategori' }), h('th', { class: 'num', text: 'Jumlah (RM)' }),
+        h('th', { class: 'num', text: 'Hari' }), h('th', { text: 'Mula' }), h('th', { text: 'Tamat' }),
+        h('th', { text: 'Aktif' }), h('th', { text: '' }))),
+      h('tbody', null, rows.map(function (k) {
+        var amt = h('input', { class: 'tin', inputmode: 'decimal', value: plain(k.amount), 'aria-label': 'Jumlah ' + k.name });
+        amt.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); amt.blur(); } });
+        amt.addEventListener('change', function () { saveTpl(k, 'amount', amt); });
+        var day = h('input', { class: 'tday', type: 'number', inputmode: 'numeric', min: '1', max: '31', value: String(k.dueDay || ''), 'aria-label': 'Hari ' + k.name });
+        day.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); day.blur(); } });
+        day.addEventListener('change', function () { saveTpl(k, 'dueDay', day); });
+        var endCell;
+        if (editEnd === k.id) {
+          var mi = h('input', { class: 'tmon', type: 'month', value: k.endMonth || '', min: k.startMonth || null, 'aria-label': 'Tamat ' + k.name });
+          mi.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') { e.preventDefault(); mi.blur(); }
+            if (e.key === 'Escape') { editEnd = null; mi.value = k.endMonth || ''; mi.blur(); }
+          });
+          mi.addEventListener('blur', function () { editEnd = null; saveTpl(k, 'endMonth', mi); setTimeout(render, 0); });
+          endCell = h('td', { class: 'nw' }, mi);
+          setTimeout(function () { mi.focus(); }, 0);
+        } else {
+          endCell = h('td', { class: 'nw' }, h('button', { type: 'button', class: 'link', text: k.endMonth ? monthShort(k.endMonth) : '—', title: 'Ubah bulan tamat',
+            onclick: function () { editEnd = k.id; render(); } }));
+        }
+        var sw = h('input', { type: 'checkbox', class: 'sw', checked: k.active, 'aria-label': 'Aktif ' + k.name });
+        sw.addEventListener('change', function () { saveTpl(k, 'active', sw); });
+        return h('tr', { class: k.active ? null : 'dim' },
+          h('td', { text: k.name }),
+          h('td', { class: 'nw muted', text: k.category }),
+          h('td', { class: 'num' }, amt),
+          h('td', { class: 'num' }, day),
+          h('td', { class: 'nw', text: monthShort(k.startMonth) }),
+          endCell,
+          h('td', null, sw),
+          h('td', { class: 'r' }, twoStep('✕', 'Padam?', 'x', function () { return delTpl(k, !!hasPay[k.id]); }, 'Padam ' + k.name)));
+      })),
+      h('tfoot', null, h('tr', null, h('td', { colspan: '2', text: 'Jumlah komitmen aktif' }), h('td', { class: 'num mono', text: rm(total) }), h('td', { colspan: '5' })))));
+  }
+
+  function saveTpl(k, field, input) {
+    var v, patch = {};
+    if (field === 'amount') {
+      v = parseAmt(input.value);
+      if (!(v > 0)) { toast('Jumlah mesti lebih daripada RM 0.'); input.value = plain(k.amount); return; }
+      input.value = plain(v);
+      if (cents(v) === cents(k.amount)) return;
+    } else if (field === 'dueDay') {
+      v = Math.round(+input.value);
+      if (!(v >= 1 && v <= 31)) { toast('Tarikh akhir mesti antara 1 hingga 31.'); input.value = k.dueDay; return; }
+      if (v === k.dueDay) return;
+    } else if (field === 'endMonth') {
+      v = String(input.value || '').trim();
+      if (v && !/^\d{4}-\d{2}$/.test(v)) { toast('Bulan tidak sah. Guna format TTTT-BB.'); return; }
+      if (v && k.startMonth && v < k.startMonth) { toast('Tamat bulan mesti selepas mula bulan.'); return; }
+      if (v === (k.endMonth || '')) return;
+    } else if (field === 'active') {
+      v = !!input.checked;
+    }
+    patch[field] = v;
+    write('updateRow', function (pin) { return ['komitmen', k.id, patch, pin]; }, function (d) {
+      d.komitmen.forEach(function (x) { if (x.id === k.id) x[field] = v; });
+    }).then(function (r) {
+      if (r.cancel) { render(); return; }
+      if (r.ok) toast(field === 'amount' ? 'Jumlah dikemas kini. Bayaran lepas tidak berubah.' : 'Disimpan.');
+    });
+  }
+
+  function delTpl(k, hasHistory) {
+    return write('deleteRow', function (pin) { return ['komitmen', k.id, pin]; }, function (d) {
+      if (hasHistory) d.komitmen.forEach(function (x) { if (x.id === k.id) x.active = false; });
+      else d.komitmen = d.komitmen.filter(function (x) { return x.id !== k.id; });
+    }).then(function (r) {
+      if (!r.ok) return;
+      if (r.result && r.result.deactivated) toast(k.name + ' ada sejarah bayaran, jadi ia dinyahaktifkan (tidak dipadam).');
+      else toast(k.name + ' dipadam.');
+    });
+  }
+
+  /* ----- Tab Pendapatan ----- */
+  function renderPendapatan(c) {
+    var banner = $('#incBanner');
+    var hasGaji = c.inc.some(function (x) { return x.type === 'Gaji'; });
+    if (!loaded || hasGaji) banner.replaceChildren();
+    else banner.replaceChildren(h('div', { class: 'banner' },
+      h('p', { text: 'Gaji bulan ini belum dimasukkan.' }),
+      h('div', { class: 'btns' },
+        h('button', { type: 'button', class: 'btn sm', text: 'Salin gaji bulan lepas', onclick: function () { copyPrev(c); } }),
+        h('button', { type: 'button', class: 'btn sm ghost', text: 'Masukkan sekarang', onclick: function () {
+          $('#iType').value = 'Gaji'; if (!$('#iSrc').value.trim()) $('#iSrc').value = 'Gaji';
+          $('#iAmt').scrollIntoView({ block: 'center', behavior: 'smooth' }); $('#iAmt').focus();
+        } }))));
+
+    var box = $('#incTable');
+    var rows = c.inc.slice().sort(function (a, b) { return String(a.date).localeCompare(String(b.date)) || a.created - b.created; });
+    if (!rows.length) { box.replaceChildren(h('p', { class: 'empty', text: 'Tiada pendapatan direkod untuk ' + monthName(M) + '.' })); return; }
+    box.replaceChildren(h('table', null,
+      h('thead', null, h('tr', null, h('th', { text: 'Tarikh' }), h('th', { text: 'Jenis' }), h('th', { text: 'Sumber' }),
+        h('th', { class: 'num', text: 'Jumlah' }), h('th', { text: 'Catatan' }), h('th', { text: '' }))),
+      h('tbody', null, rows.map(function (x) {
+        return h('tr', null,
+          h('td', { class: 'nw', text: shortDate(x.date) }),
+          h('td', null, h('span', { class: 'chip ' + (x.type === 'Gaji' ? 'g' : 'n'), text: x.type })),
+          h('td', { text: x.source }),
+          h('td', { class: 'num mono', text: rm(x.amount) }),
+          h('td', { class: 'muted', text: x.note || '' }),
+          h('td', { class: 'r' }, twoStep('✕', 'Padam?', 'x', function () {
+            return write('deleteRow', function (pin) { return ['pendapatan', x.id, pin]; }, function (d) {
+              d.pendapatan = d.pendapatan.filter(function (y) { return y.id !== x.id; });
+            }).then(function (r) { if (r.ok) toast('Pendapatan dipadam.'); });
+          }, 'Padam ' + x.source)));
+      })),
+      h('tfoot', null, h('tr', null, h('td', { colspan: '3', text: 'Jumlah' }), h('td', { class: 'num mono', text: rm(c.pendapatan) }), h('td', { colspan: '2' })))));
+  }
+
+  function copyPrev(c) {
+    var prev = addMonths(c.m, -1);
+    var src = DATA.pendapatan.filter(function (x) { return x.month === prev; });
+    if (!src.length) { toast('Tiada pendapatan pada ' + monthName(prev) + ' untuk disalin.'); return; }
+    write('copyIncome', function (pin) { return [prev, c.m, pin]; }, function (d) {
+      src.forEach(function (x) {
+        var day = isISO(x.date) ? Math.min(+x.date.slice(8, 10), daysIn(c.m)) : 1;
+        d.pendapatan.push(Object.assign({}, x, { id: tmpId(), month: c.m, date: c.m + '-' + pad(day), created: Date.now() }));
+      });
+    }).then(function (r) {
+      if (r.ok) toast(((r.result && r.result.copied) || src.length) + ' rekod disalin daripada ' + monthName(prev) + '.');
+    });
+  }
+
+  /* ----- Tab Belanja ----- */
+  function renderBelanja(c) {
+    var box = $('#expTable');
+    var start = (cents(c.pendapatan) - cents(c.dibayar)) / 100;
+    var rows = c.exp.slice().sort(function (a, b) { return String(a.date).localeCompare(String(b.date)) || a.created - b.created; });
+    var bal = cents(start);
+    var body = [h('tr', { class: 'open' },
+      h('td', { class: 'nw muted', text: '—' }),
+      h('td', { colspan: '3', class: 'muted', text: 'Baki awal (pendapatan tolak komitmen dibayar)' }),
+      h('td', { class: 'num mono' + (start < 0 ? ' neg' : ''), text: rm(start) }),
+      h('td', { colspan: '2' }))];
+    rows.forEach(function (x) {
+      bal -= cents(x.amount);
+      var b = bal / 100;
+      body.push(h('tr', null,
+        h('td', { class: 'nw', text: shortDate(x.date) }),
+        h('td', { text: x.item }),
+        h('td', { class: 'nw muted', text: x.category }),
+        h('td', { class: 'num mono', text: rm(x.amount) }),
+        h('td', { class: 'num mono' + (b < 0 ? ' neg' : ''), text: rm(b) }),
+        h('td', { class: 'muted', text: x.note || '' }),
+        h('td', { class: 'r' }, twoStep('✕', 'Padam?', 'x', function () {
+          return write('deleteRow', function (pin) { return ['belanja', x.id, pin]; }, function (d) {
+            d.belanja = d.belanja.filter(function (y) { return y.id !== x.id; });
+          }).then(function (r) { if (r.ok) toast('Belanja dipadam.'); });
+        }, 'Padam ' + x.item))));
+    });
+    box.replaceChildren(h('table', null,
+      h('thead', null, h('tr', null, h('th', { text: 'Tarikh' }), h('th', { text: 'Perkara' }), h('th', { text: 'Kategori' }),
+        h('th', { class: 'num', text: 'RM' }), h('th', { class: 'num', text: 'Baki semasa' }), h('th', { text: 'Catatan' }), h('th', { text: '' }))),
+      h('tbody', null, body),
+      h('tfoot', null, h('tr', null, h('td', { colspan: '3', text: rows.length ? 'Jumlah belanja lain' : 'Belum ada belanja bulan ini' }),
+        h('td', { class: 'num mono', text: rm(c.belanja) }), h('td', { class: 'num mono' + (c.baki < 0 ? ' neg' : ''), text: rm(c.baki) }), h('td', { colspan: '2' })))));
+
+    var cats = byCategory(c);
+    var bk = $('#expBreak');
+    if (!cats.length) { bk.replaceChildren(h('p', { class: 'hint', text: 'Tiada belanja untuk dipecahkan.' })); return; }
+    bk.replaceChildren(h('div', { class: 'brk' }, cats.map(function (x) {
+      return [h('div', { text: x.cat }),
+        h('div', { class: 'b' }, h('span', { style: 'width:' + x.pct.toFixed(1) + '%' })),
+        h('div', { class: 'n' }, rm(x.amt), h('small', { text: pct(x.pct) }))];
+    })));
+  }
+
+  function byCategory(c) {
+    var map = {};
+    c.exp.forEach(function (x) { var k = x.category || 'Lain-lain'; map[k] = (map[k] || 0) + cents(x.amount); });
+    var total = cents(c.belanja);
+    return Object.keys(map).map(function (k) { return { cat: k, amt: map[k] / 100, pct: total ? map[k] / total * 100 : 0 }; })
+      .sort(function (a, b) { return b.amt - a.amt; });
+  }
+
+  /* ----- Tab Ringkasan ----- */
+  function renderRingkasan(c) {
+    var box = $('#rk');
+    var p = calc(addMonths(c.m, -1));
+    var hasPrev = p.pendapatan > 0 || p.pays.length > 0 || p.exp.length > 0;
+    var lead = monthName(c.m) + ': pendapatan ' + rm(c.pendapatan) + ', komitmen ' + rm(c.dijangka) +
+      (c.nisbah != null ? ' (' + pct(c.nisbah) + ')' : '') + ', belanja lain ' + rm(c.belanja) + '. Baki semasa ' + rm(c.baki) + '.';
+    if (hasPrev) {
+      var d = (cents(c.baki) - cents(p.baki)) / 100;
+      lead += d === 0 ? ' Sama seperti ' + monthOnly(p.m) + '.' : ' ' + (d > 0 ? 'Lebih' : 'Kurang') + ' ' + rm(Math.abs(d)) + ' berbanding ' + monthOnly(p.m) + '.';
+    }
+    function list(items, empty, cls) {
+      return items.length ? h('ul', { class: cls || null }, items) : h('p', { class: 'none', text: empty });
+    }
+    function amtLi(title, sub, amt) {
+      return h('li', null, h('div', null, title, sub ? h('small', { text: sub }) : null), h('span', { class: 'mono', text: rm(amt) }));
+    }
+
+    var lewat = c.items.filter(function (i) { return i.st === 'Lewat'; });
+    var soon = c.items.filter(function (i) { return !i.ps && i.days != null && i.days >= 0 && i.days <= 7; });
+    var limit = addMonths(c.m, 3);
+    var ending = DATA.komitmen.filter(function (k) { return k.active && k.endMonth && k.endMonth >= c.m && k.endMonth <= limit; })
+      .sort(function (a, b) { return a.endMonth.localeCompare(b.endMonth); });
+    var cats = byCategory(c);
+
+    var tips = [];
+    if (c.nisbah != null && c.nisbah > 60) tips.push('Nisbah komitmen tinggi (' + pct(c.nisbah) + '). Elak komitmen baru dan pertimbang menyusun semula pinjaman.');
+    if (c.unjuran < 0) tips.push('Pendapatan tidak cukup untuk semua komitmen bulan ini. Kurang ' + rm(Math.abs(c.unjuran)) + '.');
+    if (lewat.length) tips.push('Bayar ' + lewat.map(function (i) { return i.k.name; }).join(', ') + ' segera untuk elak caj lewat.');
+    if (c.pendapatan > 0) {
+      var simpan = sum(c.app.filter(function (k) { return k.category === 'Simpanan/Pelaburan'; }).map(function (k) { return k.amount; }));
+      if (cents(simpan) < cents(c.pendapatan * 0.1)) tips.push('Cuba simpan sekurang-kurangnya 10% gaji (' + rm(c.pendapatan * 0.1) + ').');
+    }
+    cats.forEach(function (x) { if (x.pct > 30) tips.push('Belanja ' + x.cat + ' tinggi bulan ini (' + rm(x.amt) + '). Semak semula.'); });
+    ending.forEach(function (k) { tips.push('Selepas ' + k.name + ' tamat, salurkan ' + rm(k.amount) + ' ke simpanan.'); });
+    if (!tips.length) tips.push('Kewangan bulan ini terkawal. Teruskan.');
+
+    box.replaceChildren(
+      h('p', { class: 'lead', text: lead }),
+      h('h3', { text: 'Komitmen tertunggak' }),
+      list(lewat.map(function (i) { return amtLi(i.k.name, i.due ? 'Tarikh akhir: ' + shortDate(i.due) : null, i.k.amount); }),
+        'Semua komitmen bulan ini sudah/akan dibayar tepat masa.'),
+      h('h3', { text: 'Akan datang (7 hari)' }),
+      list(soon.map(function (i) { return amtLi(i.k.name, 'Tarikh akhir: ' + shortDate(i.due) + (i.days === 0 ? ' (hari ini)' : ' (' + i.days + ' hari lagi)'), i.k.amount); }),
+        'Tiada komitmen perlu dibayar dalam 7 hari akan datang.'),
+      h('h3', { text: 'Komitmen tamat tidak lama lagi' }),
+      list(ending.map(function (k) {
+        return h('li', null, h('div', null, k.name + ' tamat ' + monthName(k.endMonth) + '.',
+          h('small', { text: 'Bermula ' + monthName(addMonths(k.endMonth, 1)) + ', ' + rm(k.amount) + ' sebulan akan dibebaskan.' })));
+      }), 'Tiada komitmen yang tamat dalam 3 bulan akan datang.'),
+      h('h3', { text: 'Belanja ikut kategori' }),
+      list(cats.slice(0, 3).map(function (x) { return amtLi(x.cat, pct(x.pct) + ' daripada belanja lain', x.amt); }),
+        'Tiada belanja lain direkod bulan ini.'),
+      h('h3', { text: 'Cadangan' }),
+      h('ul', { class: 'cad' }, tips.slice(0, 5).map(function (t) { return h('li', { text: t }); })),
+      h('p', { class: 'foot', text: 'Ringkasan dijana automatik daripada data bulan ini.' })
+    );
+  }
+
+  /* ===== Borang statik ===== */
+  function initForms() {
+    fillSelect($('#kCat'), KAT_K);
+    fillSelect($('#eCat'), KAT_B);
+    syncFormDefaults();
+
+    $('#fKom').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var err = $('#kErr'); err.textContent = '';
+      var rec = {
+        name: $('#kName').value.trim(), category: $('#kCat').value, amount: parseAmt($('#kAmt').value),
+        dueDay: Math.round(+$('#kDue').value), startMonth: $('#kStart').value.trim(), endMonth: $('#kEnd').value.trim(),
+        active: true, note: $('#kNote').value.trim()
+      };
+      if (!rec.name) { err.textContent = 'Sila isi nama komitmen.'; $('#kName').focus(); return; }
+      if (!(rec.amount > 0)) { err.textContent = 'Jumlah mesti lebih daripada RM 0.'; $('#kAmt').focus(); return; }
+      if (!(rec.dueDay >= 1 && rec.dueDay <= 31)) { err.textContent = 'Tarikh akhir bayar mesti antara 1 hingga 31.'; $('#kDue').focus(); return; }
+      if (!/^\d{4}-\d{2}$/.test(rec.startMonth)) { err.textContent = 'Sila pilih bulan mula (TTTT-BB).'; $('#kStart').focus(); return; }
+      if (rec.endMonth && !/^\d{4}-\d{2}$/.test(rec.endMonth)) { err.textContent = 'Tamat bulan tidak sah (TTTT-BB).'; $('#kEnd').focus(); return; }
+      if (rec.endMonth && rec.endMonth < rec.startMonth) { err.textContent = 'Tamat bulan mesti selepas mula bulan.'; $('#kEnd').focus(); return; }
+      var maxNo = DATA.komitmen.reduce(function (m, k) { return Math.max(m, k.no || 0); }, 0);
+      write('addRow', function (pin) { return ['komitmen', rec, pin]; }, function (d) {
+        d.komitmen.push(Object.assign({ id: tmpId(), no: maxNo + 1 }, rec));
+      }).then(function (r) {
+        if (!r.ok) return;
+        ['#kName', '#kAmt', '#kDue', '#kEnd', '#kNote'].forEach(function (s) { $(s).value = ''; });
+        toast(rec.name + ' ditambah.');
+      });
+    });
+
+    $('#iType').addEventListener('change', function () {
+      var src = $('#iSrc');
+      if ($('#iType').value === 'Gaji' && !src.value.trim()) src.value = 'Gaji';
+      if ($('#iType').value === 'Lain' && src.value.trim() === 'Gaji') src.value = '';
+    });
+    $('#fInc').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var err = $('#iErr'); err.textContent = '';
+      var rec = { month: M, type: $('#iType').value, source: $('#iSrc').value.trim(), amount: parseAmt($('#iAmt').value), date: $('#iDate').value, note: $('#iNote').value.trim() };
+      if (!rec.source) { err.textContent = 'Sila isi sumber pendapatan.'; $('#iSrc').focus(); return; }
+      if (!(rec.amount > 0)) { err.textContent = 'Jumlah mesti lebih daripada RM 0.'; $('#iAmt').focus(); return; }
+      if (!isISO(rec.date)) { err.textContent = 'Sila pilih tarikh.'; $('#iDate').focus(); return; }
+      write('addRow', function (pin) { return ['pendapatan', rec, pin]; }, function (d) {
+        d.pendapatan.push(Object.assign({ id: tmpId(), created: Date.now() }, rec));
+      }).then(function (r) {
+        if (!r.ok) return;
+        $('#iAmt').value = ''; $('#iNote').value = '';
+        toast('Pendapatan ditambah untuk ' + monthName(rec.month) + '.');
+      });
+    });
+
+    $('#fExp').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var err = $('#eErr'); err.textContent = '';
+      var rec = { date: $('#eDate').value, item: $('#eItem').value.trim(), category: $('#eCat').value, amount: parseAmt($('#eAmt').value), note: $('#eNote').value.trim() };
+      if (!isISO(rec.date)) { err.textContent = 'Sila pilih tarikh.'; $('#eDate').focus(); return; }
+      if (!rec.item) { err.textContent = 'Sila isi perkara.'; $('#eItem').focus(); return; }
+      if (!(rec.amount > 0)) { err.textContent = 'Jumlah mesti lebih daripada RM 0.'; $('#eAmt').focus(); return; }
+      write('addRow', function (pin) { return ['belanja', rec, pin]; }, function (d) {
+        d.belanja.push(Object.assign({ id: tmpId(), created: Date.now() }, rec));
+      }).then(function (r) {
+        if (!r.ok) return;
+        $('#eItem').value = ''; $('#eAmt').value = ''; $('#eNote').value = '';
+        var em = rec.date.slice(0, 7);
+        toast(em === M ? 'Belanja ditambah.' : 'Belanja disimpan dalam ' + monthName(em) + '.');
+      });
+    });
+  }
+
+  function syncFormDefaults() {
+    $('#kStart').value = M;
+    $('#iDate').value = defaultDate(M);
+    $('#eDate').value = defaultDate(M);
+  }
+
+  /* ===== Tab & bulan ===== */
+  function showTab(t) {
+    TAB = t; ls.set('km-tab', t);
+    document.querySelectorAll('.tab').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.tab === t)); });
+    document.querySelectorAll('.panel').forEach(function (p) { p.hidden = p.dataset.panel !== t; });
+  }
+  function setMonth(m) { M = m; payOpen = null; editEnd = null; syncFormDefaults(); render(); }
+
+  document.querySelectorAll('.tab').forEach(function (b) { b.addEventListener('click', function () { showTab(b.dataset.tab); }); });
+  $('#mPrev').addEventListener('click', function () { setMonth(addMonths(M, -1)); });
+  $('#mNext').addEventListener('click', function () { setMonth(addMonths(M, 1)); });
+  $('#mNow').addEventListener('click', function () { setMonth(curMonth()); });
+
+  /* ===== Mula ===== */
+  initForms();
+  showTab(TAB);
+  render();
+  refresh();
+  setInterval(function () { if (document.visibilityState === 'visible') refresh(); }, 15000);
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') refresh(); });
+  window.addEventListener('offline', function () { setSync(false); });
+  window.addEventListener('online', refresh);
+})();
+</script>
+</body>
+</html>
+
